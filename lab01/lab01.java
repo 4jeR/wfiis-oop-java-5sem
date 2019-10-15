@@ -9,19 +9,14 @@ public class lab01{
         double y_distance = y2 - y1;
         double dy = y_distance / 100.0;
 
-        for(int i = 0 ; i < 100; ++i){
+        for(int i = 0 ; i < 100; ++i)
             System.out.println((x1 + i * dx) + " " + (y1 + i * dy));
-        }
     }
 
     public static void draw_circle(double x0, double y0, double radius){
-        for(double alfa = 0.0; alfa <= 2.0 * Math.PI; alfa += Math.PI / 100.0){
-
-            System.out.println((x0 + radius * Math.sin(alfa)) + " " + (y0 + radius * Math.cos(alfa) ));
-        }
+        for(double alfa = 0.0; alfa <= 2.0 * Math.PI; alfa += Math.PI / 100.0)
+            System.out.println((x0 + radius * Math.sin(alfa)) + " " + (y0 + radius * Math.cos(alfa)));
     }
-
-
     public static void main(String[] args){
         draw_line(28,65,28,84);
         draw_line(28,84,34,83);
@@ -45,5 +40,3 @@ public class lab01{
         draw_circle(46,34,2);
     }
 }
-
-
