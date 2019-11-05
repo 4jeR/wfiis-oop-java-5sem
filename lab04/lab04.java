@@ -59,7 +59,7 @@ Miłej zabawy.
 
 public class lab04 {
 
-    public static void main(String[] args)throws InterruptedException{
+    public static void main(String[] args) throws InterruptedException {
         int size_x = Integer.parseInt(args[0]);
         int size_y = Integer.parseInt(args[1]);
         int steps = Integer.parseInt(args[2]);
@@ -70,8 +70,4 @@ public class lab04 {
         array.RunGame();
         
     }
-
-
-
 }
-

@@ -1,86 +1,14 @@
-import java.util.*;
-
-
-
 public class LifeArray{
     LifeArray(int sizex, int sizey, int steps, int preset){
-        _x = sizex;
-        _y = sizey;
-        _table = new char[sizey][sizex];
         _steps = steps;
-        _preset = preset;
-
-        FillTable(_table, preset);
+        _table = new Table(sizex, sizey, preset);
     }
 
-    public void FillTable(char[][] arr, int preset){
-                 
-        switch(preset){
-            case 0:
-                Random generator = new Random();
-                for(int i = 0; i < _y; i++){
-                    for(int j = 0; j < _x; j++){
-                        arr[i][j] = (generator.nextInt(53) < 7) ? 'X': '.' ;
-                    }
-                }
-            break;
 
-            case 1:
-                {
-                    int mid_x = _x / 2;
-                    int mid_y = _y / 2;
-                    
-                    FillArray(arr, '.');
-                    
-                    _table[mid_y-1][mid_x-1] = 'X';
-                    _table[mid_y-1][mid_x  ] = 'X';
-                    _table[mid_y  ][mid_x-1] = 'X';
-                    _table[mid_y  ][mid_x+1] = 'X';
-                    _table[mid_y+1][mid_x  ] = 'X';
-                }
-                
-            break;
-
-            case 2:
-                {
-                    int mid_x = _x / 2;
-                    int mid_y = _y / 2;
-                    FillArray(arr, '.');
-                    _table[mid_y-1][mid_x] = 'X';
-                    _table[mid_y  ][mid_x] = 'X';
-                    _table[mid_y+1][mid_x] = 'X';
-                }
-                break;
-                    
-            case 3:
-            {
-
-                int mid_x = _x / 2;
-                int mid_y = _y / 2;
-
-                FillArray(arr, '.');
-                
-                _table[mid_y-1][mid_x-1] = 'X';
-                _table[mid_y-1][mid_x  ] = 'X';
-                _table[mid_y-1][mid_x+1] = 'X';
-                _table[mid_y  ][mid_x-1] = 'X';
-                _table[mid_y+1][mid_x  ] = 'X';
-            }
-            
-            break;
-        }
-        
-        
-    }
-    
     public void PrintTable(char[][] arr){
-        for(int i = 0; i < _y; i++){
-            for(int j = 0; j < _x; j++){
-                System.out.print(arr[i][j]);
-            }
-            System.out.println();
-        }
+        _table.PrintTable(arr);
     }
+
 
     public void ClearConsole(int step){
         System.out.println();
@@ -89,97 +17,75 @@ public class LifeArray{
         
     }
     
+
     public void FillArray(char [][] arr, char chr){
-        for(int i = 0; i < _y; i++){
-            for(int j = 0; j < _x; j++){
-                arr[i][j] = chr;
-            }
-        }
+        _table.FillArray(arr, chr);
     }
+
 
     public void RunGame() throws InterruptedException{
         for(int i = 0; i < _steps; i++){
             ClearConsole(i+1);
-            PrintTable(_table);
+            PrintTable(_table.GetTab());
             ApplyLogic();  
             
-            Thread.sleep(420);
+            Thread.sleep(220);
         }
     }
 
 
     public void ApplyLogic(){
-        
-        char[][] _table_next = new char[_y][_x];
-        CopyTable(_table_next, _table);
+        int size_x = _table.GetX();
+        int size_y = _table.GetY();
 
-        // System.out.println("Udalo sie prekopiowac? V"); // ok kopiowanie dziala
-        // PrintTable(_table_next);
+        char[][] _table_next = new char[size_y][size_x];
 
+        CopyTable(_table_next, _table.GetTab(), size_x, size_y);
 
-        for(int i = 0; i < _y; i++){
-            for(int j = 0; j < _x; j++){
-            // for each cell
-                if(_table[i][j] == '.'){
-                    int cN = CountNeighbours(_table, i, j);
-                    if(cN == 3){
+        for(int i = 0; i < size_y; i++){
+            for(int j = 0; j < size_x; j++){
+                if(_table.GetTab()[i][j] == '.'){
+                    int cN = CountNeighbours(_table.GetTab(), i, j, size_x, size_y);
+                    if(cN == 3)
                         _table_next[i][j] = 'X';
-                    }
                     else 
                         _table_next[i][j] = '.';
                 }
-
-                else if(_table[i][j] == 'X'){
-                    int cN = CountNeighbours(_table, i, j);
-                        if( cN == 2 || cN == 3){
+                else if(_table.GetTab()[i][j] == 'X'){
+                    int cN = CountNeighbours(_table.GetTab(), i, j, size_x, size_y);
+                        if( cN == 2 || cN == 3)
                             _table_next[i][j] = 'X';
-                        }
                     else 
                         _table_next[i][j] = '.';
                 }
             }
         }
-        CopyTable(_table, _table_next);
+        CopyTable(_table.GetTab(), _table_next, size_x, size_y);
     }
 
-    public void CopyTable(char[][] dest, char[][] src){
-        
-        for(int i = 0; i < _y; i++){
-            for(int j = 0; j < _x; j++){
-                dest[i][j] = src[i][j];
-            }
-        }
+
+    public void CopyTable(char[][] dest, char[][] src, int sizex, int sizey){
+        _table.CopyTable(dest, src, sizex, sizey);
     }
     
 
-    public int CountNeighbours(char[][] table, int y, int x){
+    public int CountNeighbours(char[][] table, int curr_y, int curr_x, int sizex, int sizey){
         int sum = 0;
-
-        for(int i = y-1; i <= y+1; i++){
-            
-            if(0 <= i && i < _y){
-                for(int j = x-1; j <= x+1; j++){
-                    if(0 <= j && j < _x){
+        for(int i = curr_y-1; i <= curr_y+1; i++){
+            if(0 <= i && i < sizey){
+                for(int j = curr_x-1; j <= curr_x+1; j++){
+                    if(0 <= j && j < sizex){
                         if(table[i][j] == 'X'){
-                            if( i == y && j == x) continue;
-                            ++sum;
+                            if( i == curr_y && j == curr_x) continue;
+                            else ++sum;
                         }
                     }
                 }
             }
         }
-        
-
-        
         return sum;
     }
 
-   
-    
-    
-    int _x;
-    int _y;
-    int _steps;
-    int _preset;
-    char[][] _table;
+    private static int _steps;
+    private Table _table;
 }
