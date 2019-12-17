@@ -1,0 +1,5 @@
+fish ryba
+lustro mirror
+kierunek direction
+cat kot
+pies dog
